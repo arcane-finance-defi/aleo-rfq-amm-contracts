@@ -13,7 +13,7 @@ Deployment tx id: `at17luy79fy4sut8kz049mk2qjd60n54mvpkdhehxreme2uf0plpy8qvhwcak
 
 ## Live Demo
 
-Live demo is avaiable at https://app.arcane.finance/
+Live demo is available at https://app.arcane.finance/
 
 Use Private faucet to get some test tokens (1000 tokens max per transaction) and Swap interface to trade them.
 
@@ -23,13 +23,13 @@ Please note that sometimes fetching private records takes time. If it takes long
 
 Constant function Automated Market Makers (AMMs), such as Uniswap or Curve, are perhaps the most integral part of the traditional DeFi ecosystem.
 
-While having many advantages, AMMs on Aleo cannot fully utilize the core privacy-enabling primitives of Aleo: off chain `transition` functions and encrypted `Records`. Because an AMM needs to know up-to-date pool reserves, most of the its code has to be placed in a `finalize` function, which is executed on chain and cannot operate on `Records`.
+While having many advantages, AMMs on Aleo cannot fully utilize the core privacy-enabling primitives of Aleo: off chain `transition` functions and encrypted `Records`. Because an AMM needs to know up-to-date pool reserves, most of its code has to be placed in a `finalize` function, which is executed on chain and cannot operate on `Records`.
 
-For Aleo ecosystem to grow and be competitive, its decentralized exchanges need to leverage unique privacy-preserving features of Aleo. This is why we are building a DEX on an entirely different model called "Request-For-Quote" (RFQ).
+For the Aleo ecosystem to grow and be competitive, its decentralized exchanges need to leverage unique privacy-preserving features of Aleo. This is why we are building a DEX on an entirely different model called "Request-For-Quote" (RFQ).
 
 ## What is a Request-For-Quote?
 
-Request-for-quote (RFQ) is a form of P2P swaps. Our protocols offers users OTC (over-the-counter) desk experience, but automated, private and cryptographically signed.
+Request-for-quote (RFQ) is a form of P2P swaps. Our protocol offers users OTC (over-the-counter) desk experience, but automated, private and cryptographically signed.
 
 Here’s traditional how OTC trades work:
 
@@ -37,11 +37,11 @@ Here’s traditional how OTC trades work:
 2. She responds with an offer: “260,079 USDT. Take it or leave it.”
 3. If you like the offer, you execute the trade.
 
-Now imagine that your receive cryptographically signed quotes from several sellers, automatically pick the best deal and can execute the trade immediately if you like it. And all this while remaining private. Sounds good? This is exactly how our RFQ DEX works.
+Now imagine that you receive cryptographically signed quotes from several sellers, automatically pick the best deal and can execute the trade immediately if you like it. And all this while remaining private. Sounds good? This is exactly how our RFQ DEX works.
 
 In a nutshell, an AMM pricing function `x*y=k` is now replaced with a cryptographically signed, private quote, which is verified off chain, in a `transition`. The pricing is done off chain but the trade is executed on chain.
 
-## How an RFQ DEX can benefit Aleo Ecosystem?
+## How can an RFQ DEX benefit the Aleo Ecosystem?
 
 While this project is an early stage Proof-of-Concept, it already shows that Aleo enables building privacy-preserving DeFi protocols that have real competitive advantages over existing solutions.
 
@@ -134,7 +134,7 @@ This means you will get 0.594132 ETH for 1000 USDT.
 
 # Program specification
 
-This section provides detailed description of all elements of the main Aleo program.
+This section provides a detailed description of all elements of the main Aleo program.
 
 ## Records
 
@@ -160,7 +160,7 @@ Record fields:
 
 #### Comments
 
-Our program operates on test tokens that are defined in the same program because Aleo currently doesn't have a widely accepted token standard and primitives required to build one are missing (e.g. `self.parent` proposed here https://github.com/AleoHQ/ARCs/tree/master/arc-0030). Our team is working on relevant ARCs.
+Our program operates on test tokens that are defined in the same program because Aleo currently doesn't have a common token standard and primitives required to build one are missing (e.g. `self.parent` proposed here https://github.com/AleoHQ/ARCs/tree/master/arc-0030). Our team is working on relevant ARCs.
 
 ## Structs
 
@@ -186,7 +186,7 @@ Struct fields:
 
 ### Quote
 
-`Quote` contains maker's quote information. A `Quote` with a valid `Signature` is a commitment of a maker (seler) to enter a swap.
+`Quote` contains the maker's quote information. A `Quote` with a valid `Signature` is a commitment of a maker (seller) to enter a swap.
 
 ```rust
 struct Quote {
@@ -217,7 +217,7 @@ Struct fields:
 - Quote is private for a user (buyer): it does not include any user information.
 - Quote is pseudo private for a maker (seller): a maker can use several unrelated values for `maker_address`
 - `nonce` is used to prevent replay attacks, i.e. using the same quote in more than one trade.
-- `valid_until` limits the commitment of a maker to enter a swap up until a certain block. More accurate time constaints will be introduced as Leo `finalize` functions will be able to access current time information.
+- `valid_until` limits the commitment of a maker to enter a swap up until a certain block. More accurate time constraints will be introduced as Leo `finalize` functions will be able to access current time information.
 
 ### Signature
 
@@ -243,7 +243,7 @@ Leo will soon have a native signature verification op code, see PR https://githu
 
 ## Mappings
 
-This section describes public, on chain state of the main program.
+This section describes the public, on chain state of the main program.
 
 ### registered_tokens
 
@@ -259,7 +259,7 @@ mapping registered_tokens: u64 => TokenInfo;
 
 ### maker_balances
 
-`maker_balance` keeps track of reserves of makers. These reserves gurantee execution of valid quotes.
+`maker_balance` keeps track of reserves of makers. These reserves guarantee execution of valid quotes.
 
 ```rust
 mapping maker_balances: field  => u128;
@@ -271,7 +271,7 @@ mapping maker_balances: field  => u128;
 
 #### Comments
 
-A key in `maker_balance` is a sum of hashes of maker's address and an id of a token reserved. This allows a maker to create several pseudo-anonymous reserve buckets using different addresses.
+A key in `maker_balance` is a sum of hashes of the maker's address and an id of a token reserved. This allows a maker to create several pseudo-anonymous reserve buckets using different addresses.
 
 ### executed_quotes
 
@@ -291,11 +291,11 @@ A maker should use a different `nonce` in every new quote, regardless of whether
 
 ## RFQ Transitions/Functions
 
-Below is the desription of functions and transitions related to RFQ swaps.
+Below is the description of functions and transitions related to RFQ swaps.
 
 ### add_liquidity
 
-A maker executes `add_liquidity` to put provide token reservers that will be used to executed swaps she quoted.
+A maker executes `add_liquidity` to provide token reserves that will be used to execute swaps she quoted.
 
 ```rust
 transition add_liquidity(t: Token, maker_address: address, amount: u128) -> Token
@@ -309,7 +309,7 @@ Parameters:
 | `maker_address: address` | signing address of a maker     |
 | `amount: u128`           | amount of liquidity to reserve |
 
-Returns: a "change" `Token` if the amount of liquidity to reserve is less then the amount stored in the `Token` record `t`.
+Returns: a "change" `Token` if the amount of liquidity to reserve is less than the amount stored in the `Token` record `t`.
 
 #### Comments
 
@@ -349,17 +349,17 @@ Parameters:
 | `token_id: u64` | token to be withdrawn  |
 | `amount: u128`  | amount to be withdrawn |
 
-Returns: a private `Token` record if there is enough tokens to withdraw.
+Returns: a private `Token` record if there are enough tokens to withdraw.
 
 Similar to `add_liquidity`, `remove_liquidity` by itself does not make public which token is withdrawn and which address is the owner.
 
 #### Comments
 
-Note that due to the private nature of swaps, a maker can always withdraw her deposit via a executing a swap against her own quote. The `remove_liquidity` transition is just a more convinient way to do it.
+Note that due to the private nature of swaps, a maker can always withdraw her deposit via executing a swap against her own quote. The `remove_liquidity` transition is just a more convenient way to do it.
 
 ### quote_swap
 
-`quote_swap` is the transition that peforms swap of a given `Token` record `t`, by verifying a signature `s` of a maker's quote `q`.
+`quote_swap` is the transition that performs swap of a given `Token` record `t`, by verifying a signature `s` of a maker's quote `q`.
 
 ```rust
 transition quote_swap(
@@ -402,7 +402,7 @@ The following information remains entirely private:
 
 ### verify_signature
 
-This function uses a modified Schnorr signature alorithm from snarkVM to validate a `Signature` of a quote.
+This function uses a modified Schnorr signature algorithm from snarkVM to validate a `Signature` of a quote.
 
 ```rust
 function verify_signature(q: Quote, s: Signature) -> bool
@@ -424,7 +424,7 @@ The signing and verification algorithms are modified versions of the algorithms 
 
 ### get_deposit_id
 
-`get_deposit_id` is a helper function that hashes maker's address and token id to get deposit bucket id.
+`get_deposit_id` is a helper function that hashes the maker's address and token id to get a deposit bucket id.
 
 ```rust
 function get_deposit_id(maker_address: address, token_id: u64) -> field
@@ -441,7 +441,7 @@ Returns a field element that uniquely identifies a deposit.
 
 ### init_demo_market_maker
 
-`init_demo_market_maker` is an auxilary configuration function that simplifies testing by providing 1M test token liquidity for each demo tokens with ids 1,2,3 and 4 for a test market maker with an address `aleo1r3qlsxnuux6rkrhk24rktdtzu7kjr3c2fw5fvtp6a9dwghe0xgzs9c2nhu`.
+`init_demo_market_maker` is an auxiliary configuration function that simplifies testing by providing 1M test token liquidity for each demo tokens with ids 1,2,3 and 4 for a test market maker with an address `aleo1r3qlsxnuux6rkrhk24rktdtzu7kjr3c2fw5fvtp6a9dwghe0xgzs9c2nhu`.
 
 ```rust
 transition init_demo_market_maker(dummy: field) -> field
@@ -461,7 +461,7 @@ This transition does not requireany input parameters or return values. Dummy par
 
 ## Tokens: Transitions/Functions
 
-Our program uses internal tokens.For the sake of brevity, it implements only the required minumum of token-related functions.
+Our program uses internal tokens.For the sake of brevity, it implements only the required minimum of token-related functions.
 
 ### create_token
 
@@ -479,7 +479,7 @@ Parameters:
 | `decimals: u8`     | the number of decimal digits |
 | `max_supply: u128` | maximum supply               |
 
-Result: a new token is registered and `registered_tokens` map is updated.
+Result: a new token is registered and the `registered_tokens` map is updated.
 
 ### mint_private
 
@@ -509,7 +509,7 @@ Each call of `mint_private` can mint at most 1000 tokens (assuming 6 decimals) t
 
 ### init_demo_tokens
 
-`init_demo_tokens` is an auxilary configuration function that simplifies testing. Running `init_demo_tokens` configures 4 test tokens with 6 decimals in one transaction.
+`init_demo_tokens` is an auxiliary configuration function that simplifies testing. Running `init_demo_tokens` configures 4 test tokens with 6 decimals in one transaction.
 
 ```rust
 transition init_demo_tokens(dummy: field) -> field
@@ -525,4 +525,6 @@ Result: a `dummy` value plus one
 
 #### Comments
 
-Similar to `init_demo_market_maker` dummy parameters are used only as a workaround.
+Similar to `init_demo_market_maker` , dummy parameters are used only as a workaround.
+
+
