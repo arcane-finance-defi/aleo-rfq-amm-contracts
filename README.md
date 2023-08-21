@@ -1,5 +1,52 @@
-# rfq-aleo-dex
-[TOC]
+# rfq-aleo-dex 
+
+Table of Contents
+=================
+
+* [rfq-aleo-dex](#rfq-aleo-dex)
+   * [About](#about)
+   * [Deployment](#deployment)
+   * [Live Demo](#live-demo)
+   * [Motivation: classic AMMs are poor fit for Aleo](#motivation-classic-amms-are-poor-fit-for-aleo)
+   * [What is a Request-For-Quote?](#what-is-a-request-for-quote)
+   * [How can an RFQ DEX benefit the Aleo Ecosystem?](#how-can-an-rfq-dex-benefit-the-aleo-ecosystem)
+* [Build, deploy and test instructions](#build-deploy-and-test-instructions)
+* [Program specification](#program-specification)
+   * [Records](#records)
+      * [Token](#token)
+         * [Comments](#comments)
+   * [Structs](#structs)
+      * [TokenInfo](#tokeninfo)
+      * [Quote](#quote)
+         * [Comments](#comments-1)
+      * [Signature](#signature)
+         * [Comments](#comments-2)
+      * [Deposit](#deposit)
+   * [Mappings](#mappings)
+      * [registered_tokens](#registered_tokens)
+      * [maker_balances](#maker_balances)
+         * [Comments](#comments-3)
+      * [executed_quotes](#executed_quotes)
+         * [Comments](#comments-4)
+   * [RFQ Transitions/Functions](#rfq-transitionsfunctions)
+      * [add_liquidity](#add_liquidity)
+         * [Comments](#comments-5)
+      * [remove_liquidity](#remove_liquidity)
+         * [Comments](#comments-6)
+      * [quote_swap](#quote_swap)
+      * [verify_signature](#verify_signature)
+         * [Comments](#comments-7)
+      * [get_deposit_id](#get_deposit_id)
+      * [init_demo_market_maker](#init_demo_market_maker)
+         * [Comments](#comments-8)
+   * [Tokens: Transitions/Functions](#tokens-transitionsfunctions)
+      * [create_token](#create_token)
+      * [mint_private](#mint_private)
+         * [Comments](#comments-9)
+      * [init_demo_tokens](#init_demo_tokens)
+         * [Comments](#comments-10)
+
+## About 
 Arcane.finance is a decentralized exchange on Aleo that offers two major benefits:
 
 - **Private swaps**. Users swap encrypted `Records` for encrypted `Records`.
