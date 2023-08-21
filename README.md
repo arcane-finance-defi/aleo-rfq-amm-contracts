@@ -221,7 +221,7 @@ Struct fields:
 
 ### Signature
 
-`Signature` is a Schnorr signature, which is used to verify a quote.
+`Signature` is a Schnorr signature that is used to verify a quote.
 
 ```rust
 struct Signature {
