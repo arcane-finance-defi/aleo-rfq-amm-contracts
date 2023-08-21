@@ -1,7 +1,6 @@
 # rfq-aleo-dex 
 
-Table of Contents
-=================
+## Table of Contents
 
 * [rfq-aleo-dex](#rfq-aleo-dex)
    * [About](#about)
