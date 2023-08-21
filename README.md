@@ -54,13 +54,13 @@ Use Private faucet to get some test tokens (1000 tokens max per transaction) and
 
 Please note that sometimes fetching private records takes time. If it takes longer then 3-5 minutes, please try refreshing a page and/or re-syncing Leo wallet (see "Advanced settings" tab).
 
-## Motivation: classic AMMs are poor fit for Aleo
+## Motivation: classic AMMs and Aleo
 
 Constant function Automated Market Makers (AMMs), such as Uniswap or Curve, are perhaps the most integral part of the traditional DeFi ecosystem.
 
-While having many advantages, AMMs on Aleo cannot fully utilize the core privacy-enabling primitives of Aleo: off chain `transition` functions and encrypted `Records`. Because an AMM needs to know up-to-date pool reserves, most of its code has to be placed in a `finalize` function, which is executed on chain and cannot operate on `Records`.
+While having many advantages, AMMs on Aleo cannot fully utilize the core privacy-enabling primitives of Aleo: off chain `transition` functions and encrypted `Records`. Because an AMM needs to know up-to-date pool reserves, most of its code has to be placed in a `finalize` function, which is executed on chain and cannot operate on `Records`. This can fixed by relaxing constraints on price function invariant, but this introduce new challenges e.g. with correct handling of slippage. 
 
-For the Aleo ecosystem to grow and be competitive, its decentralized exchanges need to leverage unique privacy-preserving features of Aleo. This is why we are building a DEX on an entirely different model called "Request-For-Quote" (RFQ).
+For the Aleo ecosystem to grow and be competitive, its decentralized exchanges need to leverage unique privacy-preserving features of Aleo and off-chain computation. This is why we are building a DEX on an entirely different model called "Request-For-Quote" (RFQ).
 
 ## What is a Request-For-Quote?
 
@@ -79,6 +79,18 @@ In a nutshell, an AMM pricing function `x*y=k` is now replaced with a cryptograp
 ## How can an RFQ DEX benefit the Aleo Ecosystem?
 
 While this project is an early stage Proof-of-Concept, it already shows that Aleo enables building privacy-preserving DeFi protocols that have real competitive advantages over existing solutions.
+
+There are other considerations behind our choice of RFQ model on Aleo:
+
+1. Institutional Adoption
+RFQ model is rooted in traditional financial markets. The adoption of RFQ mechanics in Aleo can attract more sophisticated, institutional participants to the space, with deep liquidity and diverse assets.
+
+2. Expansion to Other Asset Classes
+RFQ-based execution engines are extremely flexible and can easily be expanded to accommodate derivatives and other financial instruments.
+
+3. Transformation to Dark Pools
+Our long term vision includes an extension to RFQ model that would allow for completely trustless, but fully regulated dark pools. This will provide additional liquidity and anonymity for trading large blocks of securities without incurring market impact costs.
+
 
 # Build, deploy and test instructions
 
