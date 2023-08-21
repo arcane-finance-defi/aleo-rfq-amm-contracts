@@ -453,7 +453,7 @@ The following information remains entirely private:
 
 - What token has a user sold
 - How many tokens has a user sold
-- At what price has was the trade executed
+- At what price was the trade executed
 
 ### verify_signature
 
