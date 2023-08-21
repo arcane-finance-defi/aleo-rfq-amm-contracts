@@ -64,14 +64,14 @@ Run `source .env` before each command.
 To deploy the program run:
 
 ```sh
-snarkos developer deploy "rfq_v000002.aleo" --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --path "./build/" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
+snarkos developer deploy "rfq_v000003.aleo" --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --path "./build/" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
 
 ```
 
 To initialize demo tokens run with ids 1,2,3 and 4:
 
 ```sh
-snarkos developer execute "rfq_v000002.aleo" "init_demo_tokens" "1field"  --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
+snarkos developer execute "rfq_v000003.aleo" "init_demo_tokens" "1field"  --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
 ```
 
 Test tokens correspond to following real assets:
@@ -88,7 +88,7 @@ To simplify testing, all test tokens have 6 decimals.
 To initalize demoe a market maker run:
 
 ```sh
-snarkos developer execute "rfq_v000002.aleo" "init_demo_market_maker" "1field"  --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
+snarkos developer execute "rfq_v000003.aleo" "init_demo_market_maker" "1field"  --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
 ```
 
 To mint test tokens with id 1 (USDT) run:
