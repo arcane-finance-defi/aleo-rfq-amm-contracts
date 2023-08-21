@@ -1,5 +1,5 @@
 # rfq-aleo-dex
-
+[TOC]
 Arcane.finance is a decentralized exchange on Aleo that offers two major benefits:
 
 - **Private swaps**. Users swap encrypted `Records` for encrypted `Records`.
