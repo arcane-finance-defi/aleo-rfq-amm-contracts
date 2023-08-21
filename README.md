@@ -244,6 +244,23 @@ Struct fields:
 
 Leo will soon have a native signature verification op code, see PR https://github.com/AleoHQ/leo/pull/2519. It will replace our custom signature implementation when released.
 
+### Deposit
+`Deposit` is a struct that packs maker's address and token id, so that they can be hashed together to form a unique deposit id.
+
+```rust
+struct Deposit {
+    maker_address: address,
+    token_id: u64,
+}
+```
+
+Struct fields:
+| Name            | Type      | Description                                              |
+| --------------- | --------- | -------------------------------------------------------- |
+| `maker_address`     | `address`    | address of maker (seller)                    |
+| `token_id`    | `u64`    | id of the token that maker deposits to trade          |
+
+
 ## Mappings
 
 This section describes the public, on chain state of the main program.
