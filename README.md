@@ -113,7 +113,10 @@ where:
 https://ftoy1oiyo6.execute-api.us-east-1.amazonaws.com/default/leoswap-maker?amount_in=<AMOUNT>&token_in=<TOKEN_YOU_SELL>&token_out=<TOKEN_YOU_BUY>
 ```
 
-where `<AMOUNT>` should be the amount you want to sell (all test tokens are fixed point integer with 6 decimals), `<TOKEN_YOU_SELL>` the id of the token you sell, i.e. the id of the `{TOKEN}` and `<TOKEN_YOU_BUY>` the id of the token you want to buy.
+where
+- `<AMOUNT>` should be the amount you want to sell (all test tokens are fixed point integer with 6 decimals)
+- `<TOKEN_YOU_SELL>` the id of the token you sell, i.e. the id of the `{TOKEN}`
+- `<TOKEN_YOU_BUY>` the id of the token you want to buy.
 
 For example, to get a quote for a swap of 1000 USDT for ETH, request:
 
