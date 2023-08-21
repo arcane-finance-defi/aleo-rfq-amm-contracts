@@ -84,7 +84,7 @@ There are other considerations behind our choice of RFQ model on Aleo:
 
 1. Institutional Adoption
 
-RFQ model is rooted in traditional financial markets. The adoption of RFQ mechanics in Aleo can attract more sophisticated, institutional participants to the space, with deep liquidity and diverse assets.
+RFQ model is rooted in traditional financial markets. The adoption of RFQ mechanics can attract to Aleo more sophisticated, institutional participants, with deep liquidity and diverse assets.
 
 3. Expansion to Other Asset Classes
    
