@@ -83,12 +83,15 @@ While this project is an early stage Proof-of-Concept, it already shows that Ale
 There are other considerations behind our choice of RFQ model on Aleo:
 
 1. Institutional Adoption
+
 RFQ model is rooted in traditional financial markets. The adoption of RFQ mechanics in Aleo can attract more sophisticated, institutional participants to the space, with deep liquidity and diverse assets.
 
-2. Expansion to Other Asset Classes
+3. Expansion to Other Asset Classes
+   
 RFQ-based execution engines are extremely flexible and can easily be expanded to accommodate derivatives and other financial instruments.
 
-3. Transformation to Dark Pools
+5. Transformation to Dark Pools
+   
 Our long term vision includes an extension to RFQ model that would allow for completely trustless, but fully regulated dark pools. This will provide additional liquidity and anonymity for trading large blocks of securities without incurring market impact costs.
 
 
