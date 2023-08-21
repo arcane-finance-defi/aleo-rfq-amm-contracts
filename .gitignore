@@ -1,0 +1,6 @@
+outputs/
+build/
+.env
+.ledger-3-0
+.idea
+.vscode
