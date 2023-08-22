@@ -76,6 +76,8 @@ Now imagine that you receive cryptographically signed quotes from several seller
 
 In a nutshell, an AMM pricing function `x*y=k` is now replaced with a cryptographically signed, private quote, which is verified off chain, in a `transition`. The pricing is done off chain but the trade is executed on chain.
 
+Some examples of DeFi projects that use RFQ model are: [Hashflow](https://www.hashflow.com/), [Orbiter Finance](https://www.orbiter.finance/), [Hop](https://hop.exchange/),[Airswap](www.airswap.io) 
+
 ## How can an RFQ DEX benefit the Aleo Ecosystem?
 
 While this project is an early stage Proof-of-Concept, it already shows that Aleo enables building privacy-preserving DeFi protocols that have real competitive advantages over existing solutions.
