@@ -146,14 +146,14 @@ snarkos developer execute "rfq_v000003.aleo" "init_demo_market_maker" "1field"  
 To mint test tokens with id 1 (USDT) run:
 
 ```sh
-snarkos developer execute "leoswapxyz_v000006.aleo" "mint_private" "${YOUR_ADDRESS}" "1u64" "1000000000u128" --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
+snarkos developer execute "rfq_v000003.aleo" "mint_private" "${YOUR_ADDRESS}" "1u64" "1000000000u128" --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
 
 ```
 
 To execute a swap run:
 
 ```sh
-snarkos developer execute "leoswapxyz_v000006.aleo" "quote_swap" "{TOKEN}" "{QUOTE}" "{SIGNATURE}" --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
+snarkos developer execute "rfq_v000003.aleo" "quote_swap" "{TOKEN}" "{QUOTE}" "{SIGNATURE}" --private-key "${PRIVATE_KEY}" --query "https://vm.aleo.org/api" --broadcast "https://vm.aleo.org/api/testnet3/transaction/broadcast" --fee 1000 --record "${RECORD}"
 ```
 
 where:
