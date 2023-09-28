@@ -1,4 +1,4 @@
-program rfq_v000003.aleo {
+program rfq_v000004.aleo {
 
     // ██████████████████████████████████████████████████████████████████████
     //                                 Tokens
@@ -191,6 +191,7 @@ program rfq_v000003.aleo {
         assert(t.amount >= q.amount_in);
 
         let delta: u128 = t.amount - q.amount_in;
+
         let takers_change: Token = Token {
             owner: t.owner,
             amount: delta,
@@ -209,12 +210,6 @@ program rfq_v000003.aleo {
             token_id: q.token_in,
         };
 
-        // let withdraw_from: field = Poseidon8::hash_to_field(
-        //     Deposit {
-        //         maker_address: q.maker_address, 
-        //         token_id: q.token_out
-        //     }
-        // );      
         let withdraw_from: field = get_deposit_id(q.maker_address, q.token_out);      
 
         return (takers_out, takers_change, makers_in) then finalize(
@@ -240,6 +235,67 @@ program rfq_v000003.aleo {
         
         Mapping::set(executed_quotes, quote_hash, block.height);
     }
+
+    transition quote_swap2(
+        t1: Token, 
+        t2: Token,
+        receiver: address, 
+        q: Quote,
+        s: Signature
+    ) -> (Token, Token, Token) {
+        assert(verify_signature(q,s));
+
+        assert(t1.token_id == q.token_in);
+        assert(t2.token_id == q.token_in);
+        let record_amount: u128 = t1.amount + t2.amount;
+        assert(record_amount >= q.amount_in);
+
+        let delta: u128 = record_amount - q.amount_in;
+
+        let takers_change: Token = Token {
+            owner: receiver,
+            amount: delta,
+            token_id: q.token_in,
+        };
+
+        let takers_out: Token = Token {
+            owner: receiver,
+            amount: q.amount_out,
+            token_id: q.token_out,
+        };
+
+        let makers_in: Token = Token {
+            owner: q.maker_address,
+            amount: q.amount_in,
+            token_id: q.token_in,
+        };
+
+        let withdraw_from: field = get_deposit_id(q.maker_address, q.token_out);      
+
+        return (takers_out, takers_change, makers_in) then finalize(
+            withdraw_from, 
+            Poseidon8::hash_to_field(q),
+            q.amount_out, 
+            q.valid_until
+        );        
+    }
+
+    finalize quote_swap2(
+        withdraw_from: field, 
+        quote_hash: field, 
+        amount_out: u128, 
+        valid_until: u32
+    ) {
+        assert(valid_until > block.height);
+        assert(!Mapping::contains(executed_quotes, quote_hash));  
+
+        let withdraw_balance: u128 = Mapping::get(maker_balances, withdraw_from);
+        assert(withdraw_balance >= amount_out);
+        Mapping::set(maker_balances, withdraw_from, withdraw_balance - amount_out);
+        
+        Mapping::set(executed_quotes, quote_hash, block.height);
+    }
+
 
     struct Signature {
         challenge: scalar,
