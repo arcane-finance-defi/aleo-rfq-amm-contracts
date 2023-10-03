@@ -81,10 +81,15 @@ program arcane_rfq_amm_v000001.aleo {
     ///                             Private AMM Swaps 
     /// ██████████████████████████████████████████████████████████████████████
     
-    record ExtraAmountVoucher {
+    ///  Pools
+    struct PoolKey {
+        token1: u64,
+        token2: u64,
+    }
+
+    record PoolAdmin {
         owner: address,
-        token_id: u64,
-        voucher: field,
+        pool_key: field
     }
 
     struct PoolInfo {
@@ -97,11 +102,20 @@ program arcane_rfq_amm_v000001.aleo {
         swap_fee: u128, // 10000 based, 1 = 0.01% = 0.0001
     }
 
-    struct PoolKey {
-        token1: u64,
-        token2: u64,
+    struct DepositKey {
+        holder: address,
+        pool_key: field,
+        deposit_id: field,
     }
 
+    record LpTokenReceipt {
+        owner: address,
+        token1_id: u64,
+        token2_id: u64,
+        deposit_id: field
+    }
+
+    ///  Extra amount
     struct ExtraAmountKey {
         voucher: field,
         token_id: u64,
@@ -112,21 +126,94 @@ program arcane_rfq_amm_v000001.aleo {
         token_amount: u128,
     }
 
+    record ExtraAmountVoucher {
+        owner: address,
+        token_id: u64,
+        voucher: field,
+    }
+
     mapping amm_pools: field => PoolInfo; // PoolInfo by hash(token1.id, token2.id)
-    mapping amm_lp_balances: field => u128; // user lp balance by hash(pair_id, user_address)
+    mapping amm_deposits: field => u128; // lp deposit amount by hash(id, pool_key)
     mapping amm_extras: field => ExtraAmount; // extra amount by hash(ExtraAmountKey(voucher, token_id))
 
     inline get_pool_key(token1: u64, token2: u64) -> field {
-        let actual_token0: u64 = token1 > token2 ? token2 : token1;
-        let actual_token1: u64 = token1 <= token2 ? token2 : token1;
+        let actual_token1: u64 = token1 > token2 ? token2 : token1;
+        let actual_token2: u64 = token1 <= token2 ? token2 : token1;
         return BHP256::hash_to_field(PoolKey {token1: token1, token2: token2});
+    }
+
+    inline get_extra_amount_key(token_id: u64, voucher: field) -> field {
+        return BHP256::hash_to_field(ExtraAmountKey {voucher: voucher, token_id: token_id});
+    }
+
+    inline get_deposit_key(holder: address, pool_key: field, deposit_id: field) -> field {
+        return BHP256::hash_to_field(DepositKey {holder: holder, pool_key: pool_key, deposit_id: deposit_id});
+    }
+
+    inline get_deposit_key_for_tokens(holder: address, token1: u64, token2: u64, deposit_id: field) -> field {
+        return get_deposit_key(holder, get_pool_key(token1, token2), deposit_id);
     }
 
     inline min_u128(a: u128, b: u128) -> u128 {
         return a < b ? a : b;
     }
 
-    transition add_amm_liquidity(owner: address, token1: Token, token1_amount: u128, min_token1_amount: u128, token2: Token, token2_amount: u128, min_token2_amount: u128) -> (Token, Token) {
+    transition create_pool(owner: address, token1: Token, initial_amount1: u128, token2: Token, initial_amount2: u128, swap_fee: u128) -> (PoolAdmin, Token, Token) {
+        assert(initial_amount1 > 0u128 && initial_amount2 > 0u128);
+        assert(swap_fee <= 10000u128); // 10000 based, 1 = 0.01% = 0.0001
+        assert(token1.token_id != token2.token_id);
+        assert(token1.amount >= initial_amount1 && token2.amount >= initial_amount2);
+
+        let change1: Token = Token {
+            owner: owner,
+            token_id: token1.token_id,
+            amount: token1.amount - initial_amount1
+        };
+
+        let change2: Token = Token {
+            owner: owner,
+            token_id: token2.token_id,
+            amount: token2.amount - initial_amount2
+        };
+
+        let actual_token1: Token = token1.token_id > token2.token_id ? token2 : token1;
+        let actual_token2: Token = token1.token_id < token2.token_id ? token2 : token1;
+
+        let actual_amount1: u128 = token1.token_id > token2.token_id ? initial_amount2 : initial_amount1;
+        let actual_amount2: u128 = token1.token_id < token2.token_id ? initial_amount2 : initial_amount1;
+
+        let pool_key: field = get_pool_key(actual_token1.token_id, actual_token2.token_id);
+        let pool_admin: PoolAdmin = PoolAdmin {
+            owner: owner,
+            pool_key: pool_key
+        };
+
+        return (pool_admin, change1, change2) then finalize(pool_key, actual_token1.token_id, actual_amount1, actual_token2.token_id, actual_amount2, swap_fee);
+    }
+
+    finalize create_pool(pool_key: field, token1_id: u64, token1_amount: u128, token2_id: u64, token2_amount: u128, swap_fee: u128) {
+        assert (!Mapping::contains(amm_pools, pool_key)); // the pool already exists
+
+        let pool: PoolInfo = PoolInfo {
+            id: pool_key, // hash(token1.id, token2.id)
+            token1_id: token1_id,
+            token2_id: token2_id,
+            reserve1: token1_amount,
+            reserve2: token2_amount,
+            lp_total_supply: token1_amount * token2_amount,
+            swap_fee: swap_fee, // 10000 based, 1 = 0.01% = 0.0001
+        };
+    }
+
+    transition transfer_pool_ownership(poolAdmin: PoolAdmin, to: address) -> (PoolAdmin) {
+        assert(poolAdmin.owner == self.caller);
+        return PoolAdmin {
+            owner: to,
+            pool_key: poolAdmin.pool_key
+        };
+    }
+
+    transition add_amm_liquidity(owner: address, token1: Token, token1_amount: u128, min_token1_amount: u128, token2: Token, token2_amount: u128, min_token2_amount: u128, deposit_id: field) -> (Token, Token, LpTokenReceipt) {
         let token1_change_amount: u128 = token1.amount - token1_amount;
         let token2_change_amount: u128 = token2.amount - token2_amount;
         
@@ -141,10 +228,19 @@ program arcane_rfq_amm_v000001.aleo {
             token_id: token2.token_id
         };
 
-        return (token1_change_record, token2_change_record) then finalize(BHP256::hash_to_field(owner), token1.token_id, token1_amount, min_token1_amount, token2.token_id, token2_amount, min_token2_amount);
+        let lp_token_receipt: LpTokenReceipt = LpTokenReceipt {
+            owner: owner,
+            token1_id: token1.token_id,
+            token2_id: token2.token_id,
+            deposit_id: deposit_id
+        };
+
+        let deposit_key: field = get_deposit_key_for_tokens(owner, token1.token_id, token2.token_id, deposit_id);
+
+        return (token1_change_record, token2_change_record, lp_token_receipt) then finalize(deposit_key, token1.token_id, token1_amount, min_token1_amount, token2.token_id, token2_amount, min_token2_amount);
     }
 
-    finalize add_amm_liquidity(owner: field, token1_id: u64, token1_amount: u128, min_token1_amount: u128, token2_id: u64, token2_amount: u128, min_token2_amount: u128) {
+    finalize add_amm_liquidity(deposit_key: field, token1_id: u64, token1_amount: u128, min_token1_amount: u128, token2_id: u64, token2_amount: u128, min_token2_amount: u128) {
         let pool_key: field = get_pool_key(token1_id, token2_id);
         
         let pool: PoolInfo = Mapping::get(amm_pools, pool_key);
@@ -166,84 +262,63 @@ program arcane_rfq_amm_v000001.aleo {
             lp_total_supply: pool.lp_total_supply + lp,
         };
         Mapping::set(amm_pools, pool_key, updated_pool);
-        
-        let owner_lp_balance: u128 = Mapping::get_or_use(amm_lp_balances, owner, 0u128);
-        Mapping::set(amm_lp_balances, owner, owner_lp_balance + lp);
+
+        assert(!Mapping::contains(amm_deposits, deposit_key));
+        Mapping::set(amm_deposits, deposit_key, lp);
     }
     
-    transition remove_amm_liquidity(receiver: address, token1_id: u64, token2_id: u64, token1_amount: u128, token2_amount: u128, extra_voucher: field) -> (Token, Token, ExtraAmountVoucher, ExtraAmountVoucher) {
+    transition remove_amm_liquidity(receiver: address, lp_receipt: LpTokenReceipt, token1_amount: u128, token2_amount: u128, extra_voucher: field) -> (Token, Token, ExtraAmountVoucher, ExtraAmountVoucher) {
         let token1: Token = Token {
             owner: receiver,
             amount: token1_amount,
-            token_id: token1_id
+            token_id: lp_receipt.token1_id
         };
         let token2: Token = Token {
             owner: receiver,
             amount: token2_amount,
-            token_id: token2_id
+            token_id: lp_receipt.token2_id
         };
 
         let extra_amount_voucher1: ExtraAmountVoucher = ExtraAmountVoucher {
             owner: receiver,
-            token_id: token1_id,
+            token_id: lp_receipt.token1_id,
             voucher: extra_voucher
         };
         let extra_amount_voucher2: ExtraAmountVoucher = ExtraAmountVoucher {
             owner: receiver,
-            token_id: token2_id,
+            token_id: lp_receipt.token2_id,
             voucher: extra_voucher
         };
 
-        return (token1, token2, extra_amount_voucher1, extra_amount_voucher2) then finalize(BHP256::hash_to_field(self.caller), BHP256::hash_to_field(receiver), token1_id, token2_id, token1_amount, token2_amount, BHP256::hash_to_field(extra_voucher));
+        let deposit_key: field = get_deposit_key_for_tokens(self.caller, token1.token_id, token2.token_id, lp_receipt.deposit_id);
+
+        return (token1, token2, extra_amount_voucher1, extra_amount_voucher2) then finalize(BHP256::hash_to_field(self.caller), lp_receipt.token1_id, lp_receipt.token2_id, token1_amount, token2_amount, extra_voucher);
     }
 
-    finalize remove_amm_liquidity(owner: field, receiver: field, token1_id: u64, token2_id: u64, token1_amount: u128, token2_amount: u128, extra_voucher: field) {
+    finalize remove_amm_liquidity(deposit_key: field, token1_id: u64, token2_id: u64, token1_amount: u128, token2_amount: u128, extra_voucher: field) {
         let pool_key: field = get_pool_key(token1_id, token2_id);
         let pool: PoolInfo = Mapping::get(amm_pools, pool_key);
 
         let total: u128 = pool.lp_total_supply;
 
-        let owner_lp_balance: u128 = Mapping::get_or_use(amm_lp_balances, owner, 0u128);
+        let deposit_amount_lp: u128 = Mapping::get(amm_deposits, deposit_key);
         
-        let owner_balance1: u128 = owner_lp_balance * pool.reserve1 / total;
-        let owner_balance2: u128 = owner_lp_balance * pool.reserve2 / total;
+        let deposit_amount_1: u128 = deposit_amount_lp * pool.reserve1 / total;
+        let deposit_amount_2: u128 = deposit_amount_lp * pool.reserve2 / total;
         
-        // automatic overflow check replaces assert
-        // assert (owner_token1_balance >= token1_amount && owner_token2_balance >= token2_amount);
-        let updated_balance1: u128 = owner_balance1 - token1_amount;
-        let updated_balance2: u128 = owner_balance2 - token2_amount;
+        // automatic underflow check ensures a user didn't request more than they have on this deposit
+        let change1: u128 = deposit_amount_1 - token1_amount;
+        let change2: u128 = deposit_amount_2 - token2_amount;
 
-        let new_lp1: u128 = (token1_amount * total) / pool.reserve1;
-        let new_lp2: u128 = (token2_amount * total) / pool.reserve2;
-
-        let actual_token1_amount: u128 = token1_amount;
-        let actual_token2_amount: u128 = token2_amount;
-
-        let lp: u128 = 0u128;
-        if (new_lp1 == new_lp2) {
-            lp = new_lp1;
-        } else if (new_lp1 > new_lp2) {
-            lp = new_lp1;
-            actual_token2_amount = new_lp1 * pool.reserve2 / total;
-        } else if (new_lp1 < new_lp2) {
-            lp = new_lp2;
-            actual_token1_amount = new_lp2 * pool.reserve1 / total;
-        }
-
-        let change1: u128 = actual_token1_amount - token1_amount;
-        let change2: u128 = actual_token2_amount - token2_amount;
-
-        // this voucher is already in use
-        assert (!Mapping::contains(amm_extras, extra_voucher));        
-
-        let extra1_key: field = BHP256::hash_to_field(ExtraAmountKey {voucher: extra_voucher, token_id: token1_id} ); 
-
+        let extra1_key: field = get_extra_amount_key(token1_id, extra_voucher); 
+        assert (!Mapping::contains(amm_extras, extra1_key)); // check if voucher is already in use
         Mapping::set(amm_extras, extra1_key, ExtraAmount {
             token_id: token1_id,
             token_amount: change1
         });
 
-        let extra2_key: field = BHP256::hash_to_field(ExtraAmountKey {voucher: extra_voucher, token_id: token2_id} );
+        let extra2_key: field = get_extra_amount_key(token2_id, extra_voucher);
+        assert (!Mapping::contains(amm_extras, extra2_key)); // check if voucher is already in use
         Mapping::set(amm_extras, extra2_key, ExtraAmount {
             token_id: token2_id,
             token_amount: change2
@@ -254,13 +329,12 @@ program arcane_rfq_amm_v000001.aleo {
             token1_id: pool.token1_id,
             token2_id: pool.token2_id,
             swap_fee: pool.swap_fee,
-            reserve1: pool.reserve1 - token1_amount,
-            reserve2: pool.reserve2 - token2_amount,
-            lp_total_supply: pool.lp_total_supply + lp
+            reserve1: pool.reserve1 - deposit_amount_1,
+            reserve2: pool.reserve2 - deposit_amount_2,
+            lp_total_supply: pool.lp_total_supply - deposit_amount_lp
         };
         Mapping::set(amm_pools, pool_key, updated_pool);
-
-        Mapping::set(amm_lp_balances, owner, owner_lp_balance - lp);        
+        Mapping::remove(amm_deposits, deposit_key);
     }
 
     transition swap_amm(receiver: address, token_in: Token, amount_in: u128, token_out_id: u64, amount_out: u128, extra_voucher: field) -> (Token, Token, ExtraAmountVoucher) {
@@ -286,10 +360,10 @@ program arcane_rfq_amm_v000001.aleo {
             voucher: extra_voucher
         };
 
-        return (change, token_out, extra_amount_voucher) then finalize(token_in.token_id, amount_in, token_out_id, amount_out, BHP256::hash_to_field(extra_voucher));
+        return (change, token_out, extra_amount_voucher) then finalize(BHP256::hash_to_field(receiver), token_in.token_id, amount_in, token_out_id, amount_out, extra_voucher);
     }
 
-    finalize swap_amm(token_in_id: u64, amount_in: u128, token_out_id: u64, amount_out: u128, extra_change_voucher: field) {
+    finalize swap_amm(receiver: field, token_in_id: u64, amount_in: u128, token_out_id: u64, amount_out: u128, extra_change_voucher: field) {
         let pool_key: field = get_pool_key(token_in_id, token_out_id);
         let pool: PoolInfo = Mapping::get(amm_pools, pool_key);
 
@@ -338,14 +412,14 @@ program arcane_rfq_amm_v000001.aleo {
             amount: amount,
             token_id: voucher.token_id
         };
-        return token then finalize(voucher.token_id, BHP256::hash_to_field(voucher.voucher));
+        return token then finalize(voucher.token_id, voucher.voucher, amount);
     }
 
-    finalize redeem_voucher(token_id: u64, voucher_code: field) {
+    finalize redeem_voucher(token_id: u64, voucher_code: field, amount: u128) {
         let key: field = BHP256::hash_to_field(ExtraAmountKey {voucher: voucher_code, token_id: token_id});
         
         let extra: ExtraAmount = Mapping::get(amm_extras, key);
-        assert (extra.token_id == token_id);
+        assert (extra.token_id == token_id && extra.token_amount == amount);
         Mapping::remove(amm_extras, key);
     }
 
