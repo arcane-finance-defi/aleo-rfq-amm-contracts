@@ -18,34 +18,6 @@ program arcane_rfq_amm_v000001.aleo {
 
     mapping registered_tokens: u64 => TokenInfo;
 
-    transition init_demo_tokens(dummy: field) -> field {
-        return (dummy + 1field) then finalize(dummy);  
-    }
-
-    finalize init_demo_tokens(dummy: field) {
-        let decimals: u8 = 6u8;
-        Mapping::set(registered_tokens, 1u64, TokenInfo {
-             token_id: 1u64,
-             max_supply: 1000000000u128 * (10u128 ** decimals),
-             decimals,
-        });    
-        Mapping::set(registered_tokens, 2u64, TokenInfo {
-             token_id: 2u64,
-             max_supply: 1000000000u128 * (10u128 ** decimals),
-             decimals,
-        });    
-        Mapping::set(registered_tokens, 3u64, TokenInfo {
-             token_id: 3u64,
-             max_supply: 1000000000u128 * (10u128 ** decimals),
-             decimals,
-        });    
-        Mapping::set(registered_tokens, 4u64, TokenInfo {
-             token_id: 4u64,
-             max_supply: 1000000000u128 * (10u128 ** decimals),
-             decimals,
-        });    
-    }
-
     transition create_token(token_id: u64, decimals: u8, max_supply: u128) {
         let new_token: TokenInfo = TokenInfo{
             token_id,
@@ -157,7 +129,6 @@ program arcane_rfq_amm_v000001.aleo {
     inline min_u128(a: u128, b: u128) -> u128 {
         return a < b ? a : b;
     }
-
     transition create_pool(owner: address, token1: Token, initial_amount1: u128, token2: Token, initial_amount2: u128, swap_fee: u128) -> (PoolAdmin, Token, Token) {
         assert(initial_amount1 > 0u128 && initial_amount2 > 0u128);
         assert(swap_fee <= 10000u128); // 10000 based, 1 = 0.01% = 0.0001
@@ -203,6 +174,8 @@ program arcane_rfq_amm_v000001.aleo {
             lp_total_supply: token1_amount * token2_amount,
             swap_fee: swap_fee, // 10000 based, 1 = 0.01% = 0.0001
         };
+
+        Mapping::set(amm_pools, pool_key, pool);
     }
 
     transition transfer_pool_ownership(poolAdmin: PoolAdmin, to: address) -> (PoolAdmin) {
@@ -611,6 +584,124 @@ program arcane_rfq_amm_v000001.aleo {
         let addr_flag: bool = g_addr == addr_g;
         let challenge_flag: bool = s.challenge == candidate_challenge;
         return addr_flag && challenge_flag;
+    }
+
+    /// ██████████████████████████████████████████████████████████████████████
+    ///                             DEMO 
+    /// ██████████████████████████████████████████████████████████████████████
+
+    transition init_demo_tokens(dummy: field) -> field {
+        return (dummy + 1field) then finalize(dummy);  
+    }
+
+    finalize init_demo_tokens(dummy: field) {
+        let decimals: u8 = 6u8;
+
+        Mapping::set(registered_tokens, 1u64, TokenInfo {
+             token_id: 1u64,
+             max_supply: 1000000000u128 * (10u128 ** decimals),
+             decimals,
+        });    
+        Mapping::set(registered_tokens, 2u64, TokenInfo {
+             token_id: 2u64,
+             max_supply: 1000000000u128 * (10u128 ** decimals),
+             decimals,
+        });    
+        Mapping::set(registered_tokens, 3u64, TokenInfo {
+             token_id: 3u64,
+             max_supply: 1000000000u128 * (10u128 ** decimals),
+             decimals,
+        });    
+        Mapping::set(registered_tokens, 4u64, TokenInfo {
+             token_id: 4u64,
+             max_supply: 1000000000u128 * (10u128 ** decimals),
+             decimals,
+        });    
+    }
+
+
+    transition init_demo_pools(dummy: field) {
+        return then finalize();
+    }
+
+    finalize init_demo_pools() {
+        let reserve1: u128 = 100000000000000u128;
+        let reserve2: u128 = 100000000000000u128;
+        let reserve3: u128 = 50000000000u128;
+        let reserve4: u128 = 500000000000u128;
+
+        let pool12_key: field = get_pool_key(1u64, 2u64);
+        let pool12: PoolInfo = PoolInfo {
+            id: pool12_key, // hash(token1.id, token2.id)
+            token1_id: 1u64,
+            token2_id: 2u64,
+            reserve1: reserve1,
+            reserve2: reserve2,
+            lp_total_supply: reserve1 * reserve2,
+            swap_fee: 10u128, // 10000 based, 1 = 0.01% = 0.0001
+        };
+        assert(!Mapping::contains(amm_pools, pool12_key));
+        Mapping::set(amm_pools, pool12_key, pool12); 
+
+        let pool13_key: field = get_pool_key(1u64, 3u64);
+        let pool13: PoolInfo = PoolInfo {
+            id: pool13_key,
+            token1_id: 1u64,
+            token2_id: 3u64,
+            reserve1: reserve1,
+            reserve2: reserve3,
+            lp_total_supply: reserve1 * reserve3,
+            swap_fee: 10u128, // 10000 based, 1 = 0.01% = 0.0001
+        };
+        Mapping::set(amm_pools, pool13_key, pool13); 
+
+        let pool14_key: field = get_pool_key(1u64, 4u64);
+        let pool14: PoolInfo = PoolInfo {
+            id: pool14_key,
+            token1_id: 1u64,
+            token2_id: 4u64,
+            reserve1: reserve1,
+            reserve2: reserve4,
+            lp_total_supply: reserve1 * reserve4,
+            swap_fee: 10u128,
+        };
+        Mapping::set(amm_pools, pool14_key, pool14); 
+
+        let pool23_key: field = get_pool_key(2u64, 3u64);
+        let pool23: PoolInfo = PoolInfo {
+            id: pool23_key, // hash(token1.id, token2.id)
+            token1_id: 2u64,
+            token2_id: 3u64,
+            reserve1: reserve2,
+            reserve2: reserve3,
+            lp_total_supply: reserve2 * reserve3,
+            swap_fee: 10u128,
+        };
+        Mapping::set(amm_pools, pool23_key, pool23); 
+
+        let pool24_key: field = get_pool_key(2u64, 4u64);
+        let pool24: PoolInfo = PoolInfo {
+            id: pool24_key,
+            token1_id: 2u64,
+            token2_id: 4u64,
+            reserve1: reserve2,
+            reserve2: reserve4,
+            lp_total_supply: reserve2 * reserve4,
+            swap_fee: 10u128,
+        };
+        Mapping::set(amm_pools, pool24_key, pool24); 
+
+        let pool34_key: field = get_pool_key(3u64, 4u64);
+        let pool34: PoolInfo = PoolInfo {
+            id: pool34_key,
+            token1_id: 3u64,
+            token2_id: 4u64,
+            reserve1: reserve3,
+            reserve2: reserve4,
+            lp_total_supply: reserve3 * reserve4,
+            swap_fee: 10u128,
+        };
+        Mapping::set(amm_pools, pool34_key, pool34); 
     }
 
 }
