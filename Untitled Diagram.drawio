@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-10-19T20:57:42.516Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="UBiXbD7X-GyNqAXfFH14" version="22.0.5" type="github">
+<mxfile host="app.diagrams.net" modified="2023-10-19T21:02:04.139Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="l1qhRef8spFvMg-944Q7" version="22.0.5" type="github">
   <diagram name="Page-1" id="2YBvvXClWsGukQMizWep">
     <mxGraphModel dx="1364" dy="803" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -54,13 +54,13 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="oIRtnbg-KgbVpLRa1ibR-1" value=": RFQ Market Maker Server" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-1" value=": RFQ Market Maker Server (N)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
           <mxGeometry x="350" y="40" width="100" height="560" as="geometry" />
         </mxCell>
         <mxCell id="oIRtnbg-KgbVpLRa1ibR-2" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="oIRtnbg-KgbVpLRa1ibR-1">
           <mxGeometry x="45" y="80" width="10" height="440" as="geometry" />
         </mxCell>
-        <mxCell id="oIRtnbg-KgbVpLRa1ibR-3" value=":AMM Market Maker Server (Singleton)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-3" value=":AMM Market Maker Server (1)" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
           <mxGeometry x="500" y="40" width="100" height="300" as="geometry" />
         </mxCell>
         <mxCell id="oIRtnbg-KgbVpLRa1ibR-4" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};" vertex="1" parent="oIRtnbg-KgbVpLRa1ibR-3">
@@ -182,6 +182,17 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-65" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="oIRtnbg-KgbVpLRa1ibR-44" target="oIRtnbg-KgbVpLRa1ibR-37">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="635" y="100" as="sourcePoint" />
+            <mxPoint x="685" y="50" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-66" value="Withdraw AMM Liquidity + Collected Fee" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="oIRtnbg-KgbVpLRa1ibR-65">
+          <mxGeometry x="-0.3242" y="-1" relative="1" as="geometry">
+            <mxPoint x="39" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
         <mxCell id="oIRtnbg-KgbVpLRa1ibR-48" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" target="oIRtnbg-KgbVpLRa1ibR-7">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="950" y="150" as="sourcePoint" />
@@ -193,37 +204,26 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="oIRtnbg-KgbVpLRa1ibR-50" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" target="oIRtnbg-KgbVpLRa1ibR-8">
-          <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="945" y="520" as="sourcePoint" />
-            <mxPoint x="700" y="520" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="oIRtnbg-KgbVpLRa1ibR-51" value="Withdraw AMM Liquidity + Collected Fee" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="oIRtnbg-KgbVpLRa1ibR-50">
-          <mxGeometry x="0.1473" relative="1" as="geometry">
-            <mxPoint x="14" as="offset" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="oIRtnbg-KgbVpLRa1ibR-52" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" target="oIRtnbg-KgbVpLRa1ibR-35">
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-52" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="1110" y="130" as="sourcePoint" />
-            <mxPoint x="450" y="80" as="targetPoint" />
+            <mxPoint x="820" y="130" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="oIRtnbg-KgbVpLRa1ibR-53" value="Deposit Tokens to Quote Against" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="oIRtnbg-KgbVpLRa1ibR-52">
           <mxGeometry x="-0.0894" y="2" relative="1" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint y="-2" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="oIRtnbg-KgbVpLRa1ibR-54" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" target="oIRtnbg-KgbVpLRa1ibR-35">
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-54" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="400" y="550" as="sourcePoint" />
-            <mxPoint x="450" y="500" as="targetPoint" />
+            <mxPoint x="822.75" y="540" as="sourcePoint" />
+            <mxPoint x="1085" y="540" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="oIRtnbg-KgbVpLRa1ibR-55" value="Withdraw Tokens" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="oIRtnbg-KgbVpLRa1ibR-54">
           <mxGeometry x="-0.1323" y="3" relative="1" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint x="8" y="3" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="oIRtnbg-KgbVpLRa1ibR-56" value=":RFQ Market Maker" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
@@ -240,6 +240,18 @@
         </mxCell>
         <mxCell id="oIRtnbg-KgbVpLRa1ibR-60" value="User" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
           <mxGeometry x="25" y="40" width="15" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-68" value="Backend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="160" y="550" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-70" value="On-chain programs" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="160" y="590" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-71" value="EOA/Human Actor" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="160" y="630" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="oIRtnbg-KgbVpLRa1ibR-72" value="&lt;b style=&quot;font-size: 16px;&quot;&gt;Legend:&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="160" y="520" width="60" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
