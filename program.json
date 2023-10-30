@@ -1,6 +1,6 @@
 {
-  "program": "arcane_rfq_amm_v000001.aleo",
-  "version": "0.0.0",
+  "program": "arcane_rfq_amm_v000002.aleo",
+  "version": "0.0.2",
   "description": "",
   "development": {
     "private_key": "APrivateKey1zkpHtqVWT6fSHgUMNxsuVf7eaR6id2cj7TieKY1Z8CP5rCD",
